@@ -412,6 +412,7 @@ var nodeCleanupTimeout = setInterval( function ()
 server.listen(process.env.PORT || 3000);
 
 //HTTPS add :: dadfkim-20190624
+/*
 var https = require('https');
 var fs = require('fs');
 var path = require('path');
@@ -445,6 +446,6 @@ var options = {
         }
     };
 
-https.createServer(options, app).listen(8443);
-
+https.createServer(options, app).listen(443);
+*/
 module.exports = server;
