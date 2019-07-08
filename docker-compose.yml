@@ -1,5 +1,8 @@
 version: '3'
 
+networks:
+    backend:
+
 services:
   nginx:
     container_name: nginx_container_1
@@ -33,7 +36,4 @@ services:
         max-file: "10"
     restart: always
     networks:
-      - backend 
-
-  networks:
-    backend:
+      - backend
