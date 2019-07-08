@@ -1,15 +1,13 @@
-MAINTAINER youngsoo <dadfkim@hanmail.net>
+FROM nginx:latest
 
-FROM mhart/alpine-node:latest
-
-ADD . /cpxstats
-WORKDIR /cpxstats
-
-RUN npm install && npm install -g grunt-cli && grunt
-
-FROM nginx
-
-RUN echo "server { \
+RUN echo " \
+events { worker_connections 1024; } \
+http { \
+  upstream node-app { \
+    least_conn; \
+    server cpxstats-1:3000 weight=10 max_fails=3 fail_timeout=30s; \
+  } \
+server { \
   listen 80; \
   listen 443 ssl; \
   server_name netstats.cpexc.com  www.netstats.cpexc.com; \
@@ -22,7 +20,7 @@ RUN echo "server { \
   ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH'; \
   ssl_prefer_server_ciphers on; \
   location / { \
-    proxy_pass http://localhost:3000; # Change the port if needed \
+    proxy_pass http://node-app; # Change the port if needed \
     proxy_http_version 1.1; \
     proxy_set_header Upgrade $http_upgrade; \
     proxy_set_header Connection 'upgrade'; \
@@ -35,7 +33,6 @@ RUN echo "server { \
   } \
 }" > /etc/nginx/conf.d/ssl.conf
 
-COPY ~/encrption/. /opt/ssl/
+#VOLUME ["/home/cpxadmin/encryption", "/opt/ssl"]
 
 EXPOSE 443 80
-CMD ["npm", "start"]
