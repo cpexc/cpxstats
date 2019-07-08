@@ -1,31 +1,39 @@
-version: '2'
+version: '3'
 
 services:
   nginx:
     container_name: nginx_container_1
-    build: ./nginx
+    image: cpublic/nginxssl:latest
     links:
       - cpxstats-1:cpxstats-1
     ports:
       - 80:80
       - 443:443
-    valume:
+    volumes:
       - /home/cpxadmin/encryption:/opt/ssl
     depends_on:
       - cpxstats-1
+    restart: always
+    networks:
+      - backend
 
   cpxstats-1:
-    build: .
     container_name: netstats_container_1
     image: cpublic/cpxstats:latest
-    ports:
-      - 3000
     privileged: true
     environment:
       - WS_SECRET=cpx-mainnet
+      - PORT=3000
+    ports:
+      - 3000:3000
     logging:
       driver: "json-file"
       options:
         max-size: "1m"
         max-file: "10"
     restart: always
+    networks:
+      - backend 
+
+  networks:
+    backend:
