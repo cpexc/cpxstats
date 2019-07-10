@@ -24,6 +24,8 @@ services:
   cpxstats-1:
     container_name: netstats_container_1
     image: cpublic/cpxstats:latest
+    ports:
+      - 3000:3000
     privileged: true
     environment:
       - WS_SECRET=cpx-mainnet
